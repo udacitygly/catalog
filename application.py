@@ -15,13 +15,16 @@ import uuid
 
 app = Flask(__name__)
 
+app.secret_key = '081418' 
+app.debug = True
+
 # Setup the client secrets needed for Google OAuth Login
 # Per readme this must be in place for application to run
 CLIENT_ID = json.loads(
-    open('client_secrets.json', 'r').read())['web']['client_id']
+    open('/var/www/html/catalog/client_secrets.json', 'r').read())['web']['client_id']
 
 # Setup the catalog database and create session for query/updates
-engine = create_engine('sqlite:///catalog.db')
+engine = create_engine('postgresql://catalog:catalog@localhost/catalog')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
@@ -216,16 +219,19 @@ def gconnect():
     After that we'll load it in the http session and create the user if new
     """
     # Validate same GUID as when routed to login page
+    print(login_session['state'])
+    print(request.args.get('state'))
     if request.args.get('state') != login_session['state']:
         return render_template('securityerror.html',
                                message="Invalid State, Logout failed")
 
     # Get the auth code from request to exchange for credentials
     code = request.args.get('code')
+    print("code:" + code)
     try:
         # Upgrade  auth code to credentials object
         # These lines of code based on examples from class
-        oauth_flow = flow_from_clientsecrets('client_secrets.json', scope='')
+        oauth_flow = flow_from_clientsecrets('/var/www/html/catalog/client_secrets.json', scope='')
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
 
@@ -239,6 +245,7 @@ def gconnect():
            % access_token)
     h = httplib2.Http()
     result = json.loads(h.request(url, 'GET')[1])
+    print(result)    
 
     # If response has error display to user
     if result.get('error') is not None:
@@ -263,8 +270,12 @@ def gconnect():
     # Call Google to get user information
     userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
     params = {'access_token': credentials.access_token, 'alt': 'json'}
+    print(userinfo_url)
+    print(params)
     answer = requests.get(userinfo_url, params=params)
-    data = answer.json()
+    print(answer)
+    print(answer.text)
+    data = answer.json
 
     # Store results in session
     login_session['username'] = data['name']
@@ -335,5 +346,6 @@ if __name__ == '__main__':
     # Change this to static value and debug before production use
     app.secret_key = str(uuid.uuid4()).replace('-', '')
 
-    app.debug = True
-    app.run(host='0.0.0.0', port=5000)
+    app.debug = False
+    #app.run(host='172.26.9.18', port=80)
+    app.run()
