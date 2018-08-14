@@ -1,0 +1,38 @@
+{% extends "main.html" %}
+{% block content %}
+
+<div class="jumbotron">
+  <h1>Catalog Application Login</h1> 
+  <p></p>Please use the button below to login with you Google account for access to the system</p>
+  <p>Logged in users will be able to add new items to the catalog.</p> 
+  
+
+<div id="signinButton">
+  <span class="g-signin"
+    data-scope="openid email"
+    data-clientid={{ID}}
+    data-redirecturi="postmessage"
+    data-accesstype="offline"
+    data-cookiepolicy="single_host_origin"
+    data-callback="loginCallback"
+    data-approvalprompt="force">
+  </span>
+</div>
+</div>
+
+<script>
+// Pass Login Results from Google in callback to Flask code to complete
+function loginCallback(authResult) {
+  if (authResult['code']) {
+    $(location).attr("href", '/gconnect?state={{STATE}}&code='+authResult['code']);
+  }
+  else  {
+    $(location).attr("href", '/securityerror.html?message=No%20Code%From%Google');
+  }
+}
+</script>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script src="//apis.google.com/js/platform.js?onload=start"></script>
+
+{% endblock %}

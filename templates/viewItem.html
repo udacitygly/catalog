@@ -1,0 +1,18 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+
+<div class="jumbotron">
+<h1>{{category_item.name}}</h1>
+<p>{{category_item.description}}</p>
+<p>Price: {{category_item.price}} </p>
+<p>Category: <a href = "{{url_for('showCategory', category_name = category_item.category.name, 
+    category_id = category_item.category.id)}}">
+    {{category_item.category.name}} </a></p>
+
+{% if session['user_id'] == category_item.user_id %}
+<a  class="btn btn-default" href="{{url_for('editCategoryItem',category_item_id=category_item.id)}}">Edit Item</a> | 
+<a  class="btn btn-default" href="{{url_for('deleteCategoryItem',category_item_id=category_item.id)}}">Delete Item</a>
+</div>
+{% endif %}
+{% endblock %}

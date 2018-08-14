@@ -1,0 +1,38 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+	
+<h1>Create New Item</h1>
+	<form action="#" method = "post">
+		<div class="form-group">
+			<label for="name">Name:</label>
+			<input type ="text" maxlength="100" class="form-control" name="name">
+
+			<label for="description">Description:</label>
+			<textarea class="form-control" maxlength="250" rows="3" name="description"></textarea>
+
+			<label for="price">Price:</label>
+			<input type ="text" maxlength="10" class="form-control" name="price">
+
+			<label for="category">Category:</label>
+			<select class="form-control" name="category">
+			{% for c in categories %}
+			{% if (c.id == category_id) %}
+				<option value="{{c.id}}" selected>{{c.name}}</option>
+			{% else %}
+				<option value="{{c.id}}">{{c.name}}</option>
+			{% endif %}	
+			{% endfor %}	
+			</select>		
+		</div>
+				
+		<button type="submit" class="btn btn-primary" id="submit" type="submit">
+		Save</button>
+					
+		<a href = '{{url_for('showCategory', category_name = category.name,
+		category_id = category.id)}}'>
+		<button class="btn btn-default" type="button">
+		Cancel</button></a>
+	</form>
+	</div>
+{% endblock %}

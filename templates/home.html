@@ -1,0 +1,28 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+
+<div class="jumbotron">
+<div class="row">
+	<div class="col-sm-4">
+		<h3>Categories</h3>
+		{% for c in categories %}
+		<a href = "{{url_for('showCategory', category_name = c.name, category_id = c.id)}}">
+		{{c.name}}</a></br>	
+		{% endfor %}
+	</div>
+	
+	<div class="col-sm-8">
+	<h3>Recent Items</h3>
+	{% if items !=[] %}	
+		{% for i in items %}
+		<a href = "{{url_for('viewCategoryItem', category_name = i.category.name,
+		item_name = i.name, category_item_id = i.id)}}">
+			{{i.name}} </a> ({{i.category.name}})</br>
+		{% endfor %}
+	{% endif %}
+	</div>
+</div>
+</div>
+
+{% endblock %}

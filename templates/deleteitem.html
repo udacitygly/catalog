@@ -1,0 +1,18 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+
+<div class="jumbotron">
+<h2>Are you sure you want to delete {{item.name}}?</h2>
+<p>This action cannot be undone!</p>
+<form action="#" method = 'post'>
+	<button type="submit" class="btn btn-default delete" id="submit" type="submit">
+	Delete</button>
+
+	<a 	class="btn btn-default" href = '{{url_for('viewCategoryItem', category_name = item.category.name,
+	item_name= item.name, category_item_id = item.id)}}'>
+	Cancel</button></a>
+</form>
+</div>
+
+{% endblock %}
